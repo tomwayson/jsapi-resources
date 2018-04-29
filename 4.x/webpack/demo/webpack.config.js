@@ -1,4 +1,3 @@
-const ArcGISPlugin = require("@arcgis/webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -37,12 +36,26 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
+      },
+      // this appears to be needed for calcite-web sass
+      // and was previously handled by @arcgis/webpack-plugin:
+      // https://github.com/Esri/arcgis-webpack-plugin/blob/50a3e9148c6207e78233af22e13530b804bc56f3/index.js#L110-L119
+      // so have to install file-loader and configre here after removing that plugin
+      {
+        test: /.(wsv|ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "build/[name].[ext]"
+            }
+          }
+        ]
       }
     ]
   },
   plugins: [
     new CleanWebpackPlugin(["dist"]),
-    new ArcGISPlugin(),
     new HtmlWebPackPlugin({
       template: "./src/index.html",
       filename: "./index.html",
@@ -59,14 +72,6 @@ module.exports = {
     modules: [path.resolve(__dirname, "/src"), "node_modules/"],
     extensions: [".ts", ".tsx", ".js", ".scss"]
   },
-  externals: [
-    (context, request, callback) => {
-      if (/pe-wasm$/.test(request)) {
-        return callback(null, "amd " + request);
-      }
-      callback();
-    }
-  ],
   node: {
     process: false,
     global: false
