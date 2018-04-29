@@ -1,4 +1,5 @@
-import "./config";
+// no need to configure the workers b/c we use the CDN ArcGIS API
+// import "./config";
 
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
