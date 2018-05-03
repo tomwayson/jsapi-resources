@@ -1,3 +1,5 @@
+import "../config";
+
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
 import MapView = require("esri/views/SceneView");
